@@ -61,4 +61,12 @@ public class TileManager : MonoBehaviour
     {
         return columns;
     }
+
+    public void PrintTileStates()
+    {
+        foreach (Tile tile in tiles)
+        {
+            Debug.Log($"Tile Index: {tile.GetIndex()}, Occupied: {tile.IsOccupied()}, Block: {tile.GetCurrentBlock()}");
+        }
+    }
 }

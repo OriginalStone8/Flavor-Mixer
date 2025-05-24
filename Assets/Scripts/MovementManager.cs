@@ -148,7 +148,7 @@ public class MovementManager : MonoBehaviour
             return;
         }
         blocksInMotion++;
-        GameManagerScript.Instance.IncrementBlocksMoved(); 
+        //GameManagerScript.Instance.IncrementBlocksMoved(); 
         //GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canNotSwipe);
 
         LeanTween.move(block.gameObject, tile.transform.position, moveSpeed)

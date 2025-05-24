@@ -7,10 +7,9 @@ using UnityEngine;
 public class GameManagerScript : MonoBehaviour
 {
     public static GameManagerScript Instance { get; private set; } 
-    public List<IceCreamTypeSO> iceCreamTypes;
 
+    [SerializeField] private List<IceCreamTypeSO> iceCreamTypes;
     [SerializeField] private GameObject blockPrefab;
-    private int blocksMoved;
 
     public enum GameState
     {
@@ -39,17 +38,15 @@ public class GameManagerScript : MonoBehaviour
 
     private void HandleSwipe(object sender, SwipeManager.OnSwipeEventArgs e)
     {
-        ResetBlocksMoved();
-
         if (e.Direction == Vector2.left || e.Direction == Vector2.right || e.Direction == Vector2.up || e.Direction == Vector2.down)
         {
             SetGameState(GameState.canNotSwipe);
         }
-        
-        if (e.Direction == Vector2.left) MovementManager.Instance.MoveLeft();
+        MoveManager.Instance.Move(e.Direction);
+        /*if (e.Direction == Vector2.left) MovementManager.Instance.MoveLeft();
         else if (e.Direction == Vector2.right) MovementManager.Instance.MoveRight();
         else if (e.Direction == Vector2.up) MovementManager.Instance.MoveUp();
-        else if (e.Direction == Vector2.down) MovementManager.Instance.MoveDown();
+        else if (e.Direction == Vector2.down) MovementManager.Instance.MoveDown();*/
     }
 
     private void InitializeGame()
@@ -76,6 +73,12 @@ public class GameManagerScript : MonoBehaviour
         {
             GameOver();
         }
+    }
+
+    public void SpawnNewIceCream()
+    {
+        IceCreamTypeSO iceCreamTypeSO = RandomizeIceCreamType();
+        SpawnIceCream(iceCreamTypeSO);
     }
 
     private IceCreamTypeSO RandomizeIceCreamType()
@@ -108,21 +111,11 @@ public class GameManagerScript : MonoBehaviour
     public void SetGameState(GameState state)
     {
         Debug.Log("Game State changed from: " + gameState + " to: " + state);
-        gameState = state;
-        if (state == GameState.canSwipe && blocksMoved > 0)
-        {
-            IceCreamTypeSO iceCreamTypeSO = RandomizeIceCreamType();
-            SpawnIceCream(iceCreamTypeSO);
-        }   
+        gameState = state;  
     }
 
-    public void IncrementBlocksMoved()
+    public int GetIceCreamTypeCount()
     {
-        blocksMoved++;
-    }
-
-    public void ResetBlocksMoved()
-    {
-        blocksMoved = 0;
+        return iceCreamTypes.Count;
     }
 }
