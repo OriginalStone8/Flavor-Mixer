@@ -14,6 +14,12 @@ public class Block : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    public bool CanMerge(Block otherBlock)
+    {
+        if (otherBlock == null) return false;
+        return iceCreamType.index == otherBlock.iceCreamType.index;
+    }
+
     public void MergeWith()
     {
         if (GameManagerScript.Instance.GetIceCreamTypeCount() - 1 == iceCreamType.index)

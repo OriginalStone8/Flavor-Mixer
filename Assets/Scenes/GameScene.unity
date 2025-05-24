@@ -1208,7 +1208,7 @@ GameObject:
   - component: {fileID: 804749515}
   - component: {fileID: 804749514}
   m_Layer: 0
-  m_Name: MovementManager (1)
+  m_Name: 'MovementManager '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1239,7 +1239,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1045593364
 GameObject:
@@ -1274,6 +1274,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c1b0b0ef783614e4d8763983263c50db, type: 2}
   - {fileID: 11400000, guid: 85a5f84bebed946f394a0dd263a890fa, type: 2}
   - {fileID: 11400000, guid: ffe605716d7004ac7820996358a9d790, type: 2}
+  - {fileID: 11400000, guid: 826ec2f00caf64175a7cd3d14822e059, type: 2}
+  - {fileID: 11400000, guid: f30c2c738edd6451c84125f044d5b663, type: 2}
+  - {fileID: 11400000, guid: ff4e501c4a35f4e3098d3e8cf547be5f, type: 2}
   blockPrefab: {fileID: 7019476989780610314, guid: 5e0dddc5b72c941108bab5c020ba346a, type: 3}
 --- !u!4 &1045593366
 Transform:
@@ -2371,51 +2374,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.5, y: 2.5}
   m_EdgeRadius: 0
---- !u!1 &1995137843
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1995137845}
-  - component: {fileID: 1995137844}
-  m_Layer: 0
-  m_Name: MovementManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1995137844
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1995137843}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca5841fef103c4e8ca6f9a8af4ec44f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 0.3
---- !u!4 &1995137845
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1995137843}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2111487818
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,7 +33,6 @@ public class TileManager : MonoBehaviour
         }
     }
 
-
     public Tile[] GetAvailableTiles()
     {
         List<Tile> availableTiles = new List<Tile>();
@@ -45,6 +44,33 @@ public class TileManager : MonoBehaviour
             }
         }
         return availableTiles.ToArray();
+    }
+
+    public bool HasMergeOptions()
+    {
+        foreach (List<Tile> row in rows)
+        {
+            for (int i = 0; i < row.Count - 1; i++)
+            {
+                if (row[i].IsOccupied() && row[i + 1].IsOccupied() && row[i].GetCurrentBlock().CanMerge(row[i + 1].GetCurrentBlock()))
+                {
+                    return true;
+                }
+            }
+        }
+
+        foreach (List<Tile> column in columns)
+        {
+            for (int i = 0; i < column.Count - 1; i++)
+            {
+                if (column[i].IsOccupied() && column[i + 1].IsOccupied() && column[i].GetCurrentBlock().CanMerge(column[i + 1].GetCurrentBlock()))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public Tile[] GetAllTiles()

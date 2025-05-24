@@ -59,6 +59,19 @@ public class GameManagerScript : MonoBehaviour
 
     private void SpawnIceCream(IceCreamTypeSO iceCreamType)
     {
+        /*for (int i = 0; i < 5; i++)
+        {
+            Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
+            if (availableTiles.Length > 0)
+            {
+                Tile selectedTile = RandomizeTile(availableTiles);
+                Block newBlock = Instantiate(blockPrefab, selectedTile.transform.position, Quaternion.identity).GetComponent<Block>();
+                newBlock.SetIceCreamType(iceCreamType);
+                newBlock.setCurrentTile(selectedTile);
+                selectedTile.SetIsOccupied(true);
+                selectedTile.SetCurrentBlock(newBlock);
+            }
+        }*/
         Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
         if (availableTiles.Length > 0)
         {
@@ -69,7 +82,13 @@ public class GameManagerScript : MonoBehaviour
             selectedTile.SetIsOccupied(true);
             selectedTile.SetCurrentBlock(newBlock);
         }
-        else
+        CheckForGameOver();
+    }
+
+    private void CheckForGameOver()
+    {
+        Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
+        if (availableTiles.Length == 0 && !TileManager.Instance.HasMergeOptions())
         {
             GameOver();
         }
@@ -108,9 +127,14 @@ public class GameManagerScript : MonoBehaviour
         return gameState == GameState.canSwipe;
     } 
 
+    public bool isGameOver()
+    {
+        return gameState == GameState.GameOver;
+    }
+
     public void SetGameState(GameState state)
     {
-        Debug.Log("Game State changed from: " + gameState + " to: " + state);
+        //Debug.Log("Game State changed from: " + gameState + " to: " + state);
         gameState = state;  
     }
 

@@ -18,7 +18,7 @@ public class MoveManager : MonoBehaviour
             ? TileManager.Instance.GetRows()
             : TileManager.Instance.GetColumns();
 
-        bool reverse = (direction == Vector2.right || direction == Vector2.down);
+        bool reverse = direction == Vector2.right || direction == Vector2.down;
 
         foreach (List<Tile> group in groups)
         {
@@ -32,7 +32,10 @@ public class MoveManager : MonoBehaviour
         {
             GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
         }
-
+        else
+        {
+            StartCoroutine(WaitBeforeSpawnNewIceCream(0.3f));
+        }
     }
 
     private List<Block> ExtractBlocks(List<Tile> tiles, bool reverse)
@@ -76,7 +79,9 @@ public class MoveManager : MonoBehaviour
             // Move to tile
             Tile targetTile = tiles[insertIndex];
             if (current.transform.position != targetTile.transform.position)
+            {
                 moved = true;
+            } 
             else
             {
                 current.transform.position = targetTile.transform.position;
@@ -101,8 +106,8 @@ public class MoveManager : MonoBehaviour
                 if (blocksInMotion == 0)
                 {
                     //TileManager.Instance.PrintTileStates();
-                    GameManagerScript.Instance.SpawnNewIceCream();
-                    GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
+                    if (!GameManagerScript.Instance.isGameOver())
+                        GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
                 }
             });
 
@@ -111,6 +116,12 @@ public class MoveManager : MonoBehaviour
         }
 
         return moved;
+    }
+
+    private IEnumerator WaitBeforeSpawnNewIceCream(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GameManagerScript.Instance.SpawnNewIceCream();
     }
 }
 
