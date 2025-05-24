@@ -6,6 +6,8 @@ public class MoveManager : MonoBehaviour
 {
     public static MoveManager Instance { get; private set; }
 
+    [SerializeField] private float spwanDelay;
+
     private int blocksInMotion = 0;
 
     private void Awake() => Instance = this;
@@ -34,7 +36,7 @@ public class MoveManager : MonoBehaviour
         }
         else
         {
-            StartCoroutine(WaitBeforeSpawnNewIceCream(0.3f));
+            StartCoroutine(WaitBeforeSpawnNewIceCream(spwanDelay));
         }
     }
 
@@ -67,8 +69,7 @@ public class MoveManager : MonoBehaviour
             Block current = blocks[i];
 
             // Merge if possible
-            if (i + 1 < blocks.Count &&
-                blocks[i].GetIceCreamType().index == blocks[i + 1].GetIceCreamType().index)
+            if (i + 1 < blocks.Count && blocks[i].CanMerge(blocks[i + 1]))
             {
                 blocks[i].MergeWith();
                 Destroy(blocks[i + 1].gameObject);

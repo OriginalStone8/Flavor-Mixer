@@ -17,7 +17,7 @@ public class Block : MonoBehaviour
     public bool CanMerge(Block otherBlock)
     {
         if (otherBlock == null) return false;
-        return iceCreamType.index == otherBlock.iceCreamType.index;
+        return iceCreamType.index == otherBlock.iceCreamType.index && iceCreamType.index != GameManagerScript.Instance.GetIceCreamTypeCount() - 1;
     }
 
     public void MergeWith()
@@ -27,19 +27,27 @@ public class Block : MonoBehaviour
             Debug.Log("No Ice Cream Types left to merge with");
             SetIceCreamType(iceCreamType);
 
-            LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0) * 1.2f, 0.1f).setEaseOutBack().setOnComplete(() =>
-            {
-                LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0), 0.1f);
-            });
+            ScaleAnimation(1.2f);
             return;
         }
         IceCreamTypeSO newType = GameManagerScript.Instance.GetNextIceCreamType(iceCreamType);
         SetIceCreamType(newType);
 
-        LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0) * 1.2f, 0.1f).setEaseOutBack().setOnComplete(() =>
+        ScaleAnimation(1.2f);
+    }
+
+    public void ScaleAnimation(float scale)
+    {
+        LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0) * scale, 0.1f).setEaseOutBack().setOnComplete(() =>
         {
             LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0), 0.1f);
         });
+    }
+
+    public void ScaleInAnimation()
+    {
+        transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0), 0.1f).setEaseOutBack();
     }
 
     public void SetIceCreamType(IceCreamTypeSO iceCreamType)

@@ -81,6 +81,7 @@ public class GameManagerScript : MonoBehaviour
             newBlock.setCurrentTile(selectedTile);
             selectedTile.SetIsOccupied(true);
             selectedTile.SetCurrentBlock(newBlock);
+            newBlock.ScaleInAnimation();
         }
         CheckForGameOver();
     }

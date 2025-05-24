@@ -1226,6 +1226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fb57d1eed1f74789b4953eeb888b97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spwanDelay: 0.4
 --- !u!4 &804749515
 Transform:
   m_ObjectHideFlags: 0
@@ -1274,9 +1275,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c1b0b0ef783614e4d8763983263c50db, type: 2}
   - {fileID: 11400000, guid: 85a5f84bebed946f394a0dd263a890fa, type: 2}
   - {fileID: 11400000, guid: ffe605716d7004ac7820996358a9d790, type: 2}
-  - {fileID: 11400000, guid: 826ec2f00caf64175a7cd3d14822e059, type: 2}
-  - {fileID: 11400000, guid: f30c2c738edd6451c84125f044d5b663, type: 2}
-  - {fileID: 11400000, guid: ff4e501c4a35f4e3098d3e8cf547be5f, type: 2}
   blockPrefab: {fileID: 7019476989780610314, guid: 5e0dddc5b72c941108bab5c020ba346a, type: 3}
 --- !u!4 &1045593366
 Transform:
