@@ -1,272 +1,136 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MovementManager : MonoBehaviour
 {
-    public static MovementManager Instance { get; private set; } 
+    public static MovementManager Instance { get; private set; }
 
-    public event EventHandler<OnMoveFinishedEventArgs> OnInitialMoveFinished;
-    public class OnMoveFinishedEventArgs : EventArgs {
-        public Vector2 dir;
-    }
-
-    struct MergePair 
+    public event EventHandler<OnMergeEventArgs> OnMerge;
+    public class OnMergeEventArgs : EventArgs
     {
-        public Block target;
-        public Block source;
+        public Block MergedBlock;
     }
-    List<MergePair> mergeQueue = new List<MergePair>();
 
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float spwanDelay;
 
     private int blocksInMotion = 0;
 
-    private void Awake()
+    private void Awake() => Instance = this;
+
+    public void Move(Vector2 direction)
     {
-        Instance = this;
-    }
+        bool movedAny = false;
 
-    private void Start() {
-        OnInitialMoveFinished += InitialMoveFinished;
-    }
-
-    private void Update() {
-        //Debug.Log("Blocks in motion: " + blocksInMotion);
-    }
-
-    private void InitialMoveFinished(object sender, OnMoveFinishedEventArgs e)
-    {
-        List<List<Tile>> groups = (e.dir == Vector2.left || e.dir == Vector2.right)
+        List<List<Tile>> groups = (direction == Vector2.left || direction == Vector2.right)
             ? TileManager.Instance.GetRows()
             : TileManager.Instance.GetColumns();
 
-        bool reverse = e.dir == Vector2.right || e.dir == Vector2.down;
-        int blocksMoved = 0;
+        bool reverse = direction == Vector2.right || direction == Vector2.down;
 
-        foreach (var group in groups)
+        foreach (List<Tile> group in groups)
         {
             List<Block> blocks = ExtractBlocks(group, reverse);
-            blocks = MergeBlocks(blocks);
 
-            blocksMoved += ApplySecondMovementToTiles(group, blocks, reverse);
+            bool moved = MergeAndCompress(group, blocks, reverse);
+            if (moved) movedAny = true;
         }
 
-        if (blocksMoved > 0)
+        if (!movedAny)
         {
-            Debug.Log("No second movement needed — unlocking swipe");
             GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
         }
-    }
-
-
-    public void MoveLeft()
-    {
-        foreach (var row in TileManager.Instance.GetRows())
+        else
         {
-            List<Block> blocks = ExtractBlocks(row, false);
-
-            PrepareMergeBlocks(blocks);
-
-            ApplyMovementToTiles(row, blocks, false, Vector2.left);
+            StartCoroutine(WaitBeforeSpawnNewIceCream(spwanDelay));
         }
-    }
-
-    public void MoveRight()
-    {
-        foreach (var row in TileManager.Instance.GetRows())
-        {
-            List<Block> blocks = ExtractBlocks(row, true);
-
-            PrepareMergeBlocks(blocks);
-
-            ApplyMovementToTiles(row, blocks, true, Vector2.right);
-        }
-    }
-
-    public void MoveUp()
-    {
-        foreach (var column in TileManager.Instance.GetColumns())
-        {
-            List<Block> blocks = ExtractBlocks(column, false);
-
-            PrepareMergeBlocks(blocks);
-
-            ApplyMovementToTiles(column, blocks, false, Vector2.up);
-        }
-    }
-
-    public void MoveDown()
-    {
-        foreach (var column in TileManager.Instance.GetColumns())
-        {
-            List<Block> blocks = ExtractBlocks(column, true);
-            
-            PrepareMergeBlocks(blocks);
-
-            ApplyMovementToTiles(column, blocks, true, Vector2.down);
-        }
-    }
-
-    private void PrepareMergeBlocks(List<Block> blocks)
-    {
-        int i = 0;
-        while (i < blocks.Count - 1) 
-        {
-            if (blocks[i].GetIceCreamType().index == blocks[i + 1].GetIceCreamType().index) 
-            {
-                mergeQueue.Add(new MergePair { target = blocks[i], source = blocks[i + 1] });
-                i += 2;
-            } 
-            else
-                i++;
-        }
-    }
-
-    private List<Block> MergeBlocks(List<Block> blocks)
-    {
-        foreach (MergePair pair in mergeQueue)
-        {
-            pair.target.MergeWith();
-            blocks.Remove(pair.source);
-            Destroy(pair.source.gameObject);
-        }
-        mergeQueue.Clear(); 
-        return blocks;
-    }
-
-    private void MoveBlockToTile(Block block, Tile tile, Vector2 direction)
-    {
-        if (block.transform.position == tile.transform.position)
-        {
-            block.transform.position = tile.transform.position;
-            tile.SetCurrentBlock(block);
-            tile.SetIsOccupied(true);
-            block.setCurrentTile(tile);
-            return;
-        }
-        blocksInMotion++;
-        //GameManagerScript.Instance.IncrementBlocksMoved(); 
-        //GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canNotSwipe);
-
-        LeanTween.move(block.gameObject, tile.transform.position, moveSpeed)
-        .setEaseInOutSine()
-        .setOnComplete(() => {
-            block.transform.position = tile.transform.position;
-            tile.SetCurrentBlock(block);
-            tile.SetIsOccupied(true);
-            block.setCurrentTile(tile);
-
-            blocksInMotion--;
-
-            if (blocksInMotion == 0)
-            {
-                OnInitialMoveFinished?.Invoke(this, new OnMoveFinishedEventArgs { dir = direction });
-            }
-        });
     }
 
     private List<Block> ExtractBlocks(List<Tile> tiles, bool reverse)
     {
         List<Block> blocks = new List<Block>();
-        if (!reverse)
+        int count = tiles.Count;
+
+        for (int i = 0; i < count; i++)
         {
-            foreach (var tile in tiles)
+            Tile tile = reverse ? tiles[count - 1 - i] : tiles[i];
+            if (tile.IsOccupied())
             {
-                if (tile.IsOccupied())
+                blocks.Add(tile.GetCurrentBlock());
+                tile.ClearTile();
+            }
+        }
+
+        return blocks;
+    }
+
+    private bool MergeAndCompress(List<Tile> tiles, List<Block> blocks, bool reverse)
+    {
+        bool moved = false;
+        int insertIndex = reverse ? tiles.Count - 1 : 0;
+        int step = reverse ? -1 : 1;
+
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            Block current = blocks[i];
+
+            // Merge if possible
+            if (i + 1 < blocks.Count && blocks[i].CanMerge(blocks[i + 1]))
+            {
+                blocks[i].MergeWith();
+                OnMerge?.Invoke(this, new OnMergeEventArgs { MergedBlock = blocks[i] });
+                Destroy(blocks[i + 1].gameObject);
+                blocks.RemoveAt(i + 1); // Remove merged block
+                moved = true;
+            }
+
+            // Move to tile
+            Tile targetTile = tiles[insertIndex];
+            if (current.transform.position != targetTile.transform.position)
+            {
+                moved = true;
+            } 
+            else
+            {
+                current.transform.position = targetTile.transform.position;
+                targetTile.SetCurrentBlock(current);
+                targetTile.SetIsOccupied(true);
+                current.setCurrentTile(targetTile);
+            }
+
+            blocksInMotion++;
+
+            LeanTween.move(current.gameObject, targetTile.transform.position, 0.3f)
+            .setEaseInOutSine()
+            .setOnComplete(() =>
+            {
+                current.transform.position = targetTile.transform.position;
+                targetTile.SetCurrentBlock(current);
+                targetTile.SetIsOccupied(true);
+                current.setCurrentTile(targetTile);
+
+                blocksInMotion--;
+
+                if (blocksInMotion == 0)
                 {
-                    blocks.Add(tile.GetCurrentBlock());
-                    tile.ClearTile();
+                    //TileManager.Instance.PrintTileStates();
+                    if (!GameManagerScript.Instance.isGameOver())
+                        GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
                 }
-            }
-            return blocks;
+            });
+
+
+            insertIndex += step;
         }
-        else
-        {
-            for (int i = tiles.Count - 1; i >= 0; i--)
-            {
-                if (tiles[i].IsOccupied())
-                {
-                    blocks.Add(tiles[i].GetCurrentBlock());
-                    tiles[i].ClearTile();
-                }
-            }
-            return blocks;
-        }
+
+        return moved;
     }
-        
-    private void ApplyMovementToTiles(List<Tile> tiles, List<Block> blocks, bool reverse, Vector2 dir)
+
+    private IEnumerator WaitBeforeSpawnNewIceCream(float delay)
     {
-        int insertIndex = reverse ? tiles.Count - 1 : 0;
-        foreach (var block in blocks)
-        {
-            Tile targetTile = tiles[insertIndex];
-            MoveBlockToTile(block, targetTile, dir);
-            insertIndex = reverse ? insertIndex - 1 : insertIndex + 1;
-        }
+        yield return new WaitForSeconds(delay);
+        GameManagerScript.Instance.SpawnNewIceCream();
     }
-
-    private int ApplySecondMovementToTiles(List<Tile> tiles, List<Block> blocks, bool reverse)
-    {
-        int count = 0;
-        int insertIndex = reverse ? tiles.Count - 1 : 0;
-        foreach (var block in blocks)
-        {
-            Tile targetTile = tiles[insertIndex];
-            count += SecondMoveBlockToTile(block, targetTile);
-            insertIndex = reverse ? insertIndex - 1 : insertIndex + 1;
-        }
-        return count;
-    }
-
-    private int SecondMoveBlockToTile(Block block, Tile tile)
-    {
-        blocksInMotion++;
-        if (block.transform.position == tile.transform.position)
-        {
-            block.transform.position = tile.transform.position;
-            tile.SetCurrentBlock(block);
-            tile.SetIsOccupied(true);
-            block.setCurrentTile(tile);
-
-            blocksInMotion--;
-
-            return 0;
-        }
-        LeanTween.move(block.gameObject, tile.transform.position, moveSpeed)
-        .setEaseInOutSine()
-        .setOnComplete(() => {
-            block.transform.position = tile.transform.position;
-            tile.SetCurrentBlock(block);
-            tile.SetIsOccupied(true);
-            block.setCurrentTile(tile);
-
-            blocksInMotion--;
-            if (blocksInMotion == 0)
-            {
-                Debug.Log("Blocks in motion finished");
-                GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
-            }
-        });
-        return 1;
-    }
-
-    private bool WillAnyBlockMove(List<Block> blocks, List<Tile> tiles, bool reverse)
-    {
-        int insertIndex = reverse ? tiles.Count - 1 : 0;
-
-        foreach (var block in blocks)
-        {
-            Tile targetTile = tiles[insertIndex];
-            if (block != null && block.transform.position != targetTile.transform.position)
-                return true;
-
-            insertIndex = reverse ? insertIndex - 1 : insertIndex + 1;
-        }
-
-        return false;
-    }
-
 }
+

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour
@@ -72,6 +73,18 @@ public class TileManager : MonoBehaviour
 
         return false;
     }
+
+    public void CheckAllTilesAreSet()
+    {
+        foreach (Tile tile in tiles)
+        {
+            if (!tile.PropertiesAreSet())
+            {
+                Debug.LogError($"Tile at index {tile.GetIndex()} is not set.");
+            }
+        }
+        Debug.Log("All tiles checked.");
+    } 
 
     public Tile[] GetAllTiles()
     {

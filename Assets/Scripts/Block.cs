@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    [SerializeField] private float size;
     private IceCreamTypeSO iceCreamType;
     private Tile currentTile;
 
@@ -38,16 +39,22 @@ public class Block : MonoBehaviour
 
     public void ScaleAnimation(float scale)
     {
-        LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0) * scale, 0.1f).setEaseOutBack().setOnComplete(() =>
+        LeanTween.scale(gameObject, new Vector3(size, size, 0) * scale, 0.1f).setEaseOutBack().setOnComplete(() =>
         {
-            LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0), 0.1f);
+            LeanTween.scale(gameObject, new Vector3(size, size, 0), 0.1f);
         });
     }
 
     public void ScaleInAnimation()
     {
         transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(gameObject, new Vector3(0.5f, 0.5f, 0), 0.1f).setEaseOutBack();
+        LeanTween.scale(gameObject, new Vector3(size, size, 0), 0.1f).setEaseOutBack();
+    }
+
+    public void ScaleOutAnimation(float time)
+    {
+        transform.localScale = new Vector3(size, size, 0);
+        LeanTween.scale(gameObject, new Vector3(0, 0, 0), time).setEaseOutBack();
     }
 
     public void SetIceCreamType(IceCreamTypeSO iceCreamType)

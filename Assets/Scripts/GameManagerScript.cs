@@ -8,11 +8,14 @@ public class GameManagerScript : MonoBehaviour
 {
     public static GameManagerScript Instance { get; private set; } 
 
+    public event EventHandler OnGameOver;
+
     [SerializeField] private List<IceCreamTypeSO> iceCreamTypes;
     [SerializeField] private GameObject blockPrefab;
 
     public enum GameState
     {
+        Prestart,
         Start,
         canSwipe,
         canNotSwipe,
@@ -32,8 +35,9 @@ public class GameManagerScript : MonoBehaviour
 
     private void Start() 
     {
+        gameState = GameState.Prestart;
         SwipeManager.Instance.OnSwipe += HandleSwipe;
-        InitializeGame();
+        SceneManagement.Instance.OnGameStart += InitializeGame;
     }
 
     private void HandleSwipe(object sender, SwipeManager.OnSwipeEventArgs e)
@@ -42,36 +46,20 @@ public class GameManagerScript : MonoBehaviour
         {
             SetGameState(GameState.canNotSwipe);
         }
-        MoveManager.Instance.Move(e.Direction);
-        /*if (e.Direction == Vector2.left) MovementManager.Instance.MoveLeft();
-        else if (e.Direction == Vector2.right) MovementManager.Instance.MoveRight();
-        else if (e.Direction == Vector2.up) MovementManager.Instance.MoveUp();
-        else if (e.Direction == Vector2.down) MovementManager.Instance.MoveDown();*/
+        MovementManager.Instance.Move(e.Direction);
     }
 
-    private void InitializeGame()
+    private void InitializeGame(object sender, EventArgs e)
     {
         gameState = GameState.Start;
-        IceCreamTypeSO iceCreamTypeSO = RandomizeIceCreamType();
-        SpawnIceCream(iceCreamTypeSO);
+        SpawnNewIceCream();
+        SpawnNewIceCream();
         gameState = GameState.canSwipe;
     }
 
     private void SpawnIceCream(IceCreamTypeSO iceCreamType)
     {
-        /*for (int i = 0; i < 5; i++)
-        {
-            Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
-            if (availableTiles.Length > 0)
-            {
-                Tile selectedTile = RandomizeTile(availableTiles);
-                Block newBlock = Instantiate(blockPrefab, selectedTile.transform.position, Quaternion.identity).GetComponent<Block>();
-                newBlock.SetIceCreamType(iceCreamType);
-                newBlock.setCurrentTile(selectedTile);
-                selectedTile.SetIsOccupied(true);
-                selectedTile.SetCurrentBlock(newBlock);
-            }
-        }*/
+        TileManager.Instance.CheckAllTilesAreSet();
         Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
         if (availableTiles.Length > 0)
         {
@@ -118,6 +106,7 @@ public class GameManagerScript : MonoBehaviour
 
     private void GameOver()
     {
+        OnGameOver?.Invoke(this, EventArgs.Empty);
         gameState = GameState.GameOver;
         Debug.Log("Game Over!");
         // Handle game over logic here

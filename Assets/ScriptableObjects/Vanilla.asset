@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 0
   price: 2
+  scorePerMerge: 2
   icon: {fileID: 0}
-  sprite: {fileID: 21300000, guid: bf86a3a98726f400889cfade2cbf654d, type: 3}
+  sprite: {fileID: 21300000, guid: 90f04a5f99f144084996ca025f6af6c4, type: 3}
