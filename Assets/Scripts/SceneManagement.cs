@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,10 +17,25 @@ public class SceneManagement : MonoBehaviour
     [SerializeField] private float startPosY, endPosY;
     [SerializeField] private float meltAnimTime;
 
+    [SerializeField] private Button shopBtn, ordersBtn;
+
     private void Awake() 
     {
         Instance = this;
         InitializeUI();
+    }
+
+    private void Update() 
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGame();
+        }
+    }
+
+    private void ResetGame()
+    {
+        SceneManager.LoadScene("GameScene");
     }
 
     private void InitializeUI()
@@ -70,7 +86,8 @@ public class SceneManagement : MonoBehaviour
             block.ScaleOutAnimation(0.1f);
             yield return new WaitForSeconds(0.1f);
         }
-        yield return new WaitForSeconds(0.1f);
+        OrdersManager.Instance.CloseOrderPopup();
+        yield return new WaitForSeconds(0.2f);
         SceneManager.LoadScene("GameScene");
     }
 
@@ -83,6 +100,37 @@ public class SceneManagement : MonoBehaviour
     {
         startGameCanvas.SetActive(false);
         StartCoroutine(DelayedStart(0.5f));
+    }
+
+    public void OpenPopup(GameObject popup)
+    {
+        popup.SetActive(true);
+        PopupAnim(popup, true, 0.2f);
+        ordersBtn.interactable = false;
+        shopBtn.interactable = false;
+    }
+
+    public void ClosePopup(GameObject popup)
+    {
+        PopupAnim(popup, false, 0.2f);
+        ordersBtn.interactable = true;
+        shopBtn.interactable = true;
+    }
+
+    private void PopupAnim(GameObject popup, bool on, float time)
+    {
+        if (on)
+        {
+            popup.transform.localScale = new Vector3(0, 0, 0);
+            LeanTween.scale(popup, new Vector3(1, 1, 1), time).setEaseOutBack();
+        }
+        else
+        {
+            LeanTween.scale(popup, new Vector3(0, 0, 0), time).setEaseInBack().setOnComplete(() => 
+            {
+                popup.SetActive(false);
+            });
+        }
     }
 
     private IEnumerator DelayedStart(float delay)

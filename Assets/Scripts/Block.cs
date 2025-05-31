@@ -21,6 +21,15 @@ public class Block : MonoBehaviour
         return iceCreamType.index == otherBlock.iceCreamType.index && iceCreamType.index != GameManagerScript.Instance.GetIceCreamTypeCount() - 1;
     }
 
+    public void IsExtraBlock()
+    {
+        if (currentTile.GetCurrentBlock() != this)
+        {
+            Debug.Log("Block is not on the current tile, destroying");
+            Destroy(gameObject);
+        }
+    }
+
     public void MergeWith()
     {
         if (GameManagerScript.Instance.GetIceCreamTypeCount() - 1 == iceCreamType.index)
@@ -55,6 +64,16 @@ public class Block : MonoBehaviour
     {
         transform.localScale = new Vector3(size, size, 0);
         LeanTween.scale(gameObject, new Vector3(0, 0, 0), time).setEaseOutBack();
+    }
+
+    public void ScaleOutAnimationAndDestroy(float time)
+    {
+        transform.localScale = new Vector3(size, size, 0);
+        LeanTween.scale(gameObject, new Vector3(0, 0, 0), time).setEaseOutBack().setOnComplete(() =>
+        {
+            currentTile.ClearTile();
+            Destroy(gameObject);
+        });
     }
 
     public void SetIceCreamType(IceCreamTypeSO iceCreamType)

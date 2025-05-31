@@ -26,6 +26,7 @@ public class SwipeManager : MonoBehaviour
         if (!GameManagerScript.Instance.canSwipe()) return;
         #if UNITY_EDITOR
         HandleMouseInput();
+        HandleKeyboardInput();
         #else
         HandleMouseInput();
         #endif
@@ -41,6 +42,21 @@ public class SwipeManager : MonoBehaviour
             endTouchPosition = Input.mousePosition;
             DetectSwipe();
         }
+    }
+
+    private void HandleKeyboardInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            OnSwipe?.Invoke(this, new OnSwipeEventArgs { Direction = Vector2.left });
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            OnSwipe?.Invoke(this, new OnSwipeEventArgs { Direction = Vector2.right });
+        
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+            OnSwipe?.Invoke(this, new OnSwipeEventArgs { Direction = Vector2.up });
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+            OnSwipe?.Invoke(this, new OnSwipeEventArgs { Direction = Vector2.down });
     }
 
     private void HandleTouchInput()

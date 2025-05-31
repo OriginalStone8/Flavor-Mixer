@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
@@ -55,6 +54,7 @@ public class GameManagerScript : MonoBehaviour
         SpawnNewIceCream();
         SpawnNewIceCream();
         gameState = GameState.canSwipe;
+        OrdersManager.Instance.UpdateAllDisplayButtons();
     }
 
     private void SpawnIceCream(IceCreamTypeSO iceCreamType)
@@ -71,7 +71,17 @@ public class GameManagerScript : MonoBehaviour
             selectedTile.SetCurrentBlock(newBlock);
             newBlock.ScaleInAnimation();
         }
+        OrdersManager.Instance.UpdateAllDisplayButtons();
         CheckForGameOver();
+    }
+
+    private void DeleteExtraBlocks()
+    {
+        List<Block> extraBlocks = new List<Block>(FindObjectsOfType<Block>());
+        foreach (Block block in extraBlocks)
+        {
+            block.IsExtraBlock();
+        }
     }
 
     private void CheckForGameOver()
@@ -131,5 +141,15 @@ public class GameManagerScript : MonoBehaviour
     public int GetIceCreamTypeCount()
     {
         return iceCreamTypes.Count;
+    }
+
+    public IceCreamTypeSO GetRandomIceCreamType()
+    {
+        return iceCreamTypes[UnityEngine.Random.Range(0, iceCreamTypes.Count)];
+    }
+
+    public List<IceCreamTypeSO> GetIcecreamTypeList()
+    {
+        return iceCreamTypes;
     }
 }

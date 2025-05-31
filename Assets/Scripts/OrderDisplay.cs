@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,35 +11,109 @@ public class OrderDisplay : MonoBehaviour
     [SerializeField] private List<Image> iceCreamIcons;
     [SerializeField] private GameObject unlockedGroup;
     [SerializeField] private GameObject lockedGroup;
+    [SerializeField] private GameObject completedGroup;
+    [SerializeField] private Button completeButton;
+    [SerializeField] private TextMeshProUGUI prizeText;
 
     private Order currentOrder;
-
-    private bool unlocked;
 
     private void Awake() 
     {
         
     }
 
-    private void UnlockDisplay()
+    public void DisplaySetup(bool unlocked)
     {
-        unlockedGroup.SetActive(true);
-        lockedGroup.SetActive(false);
-        Order newOrder = OrdersManager.Instance.GenerateOrder();
-        currentOrder = newOrder;
-    }
-
-    public bool isUnlocked() 
-    { 
-        return unlocked; 
-    }
-
-    public void SetUnlocked(bool value)
-    {
-        unlocked = value;
         if (unlocked)
         {
-            UnlockDisplay();
+            lockedGroup.SetActive(false);
+            unlockedGroup.SetActive(true);
+            completedGroup.SetActive(false);
         }
+        else
+        {
+            lockedGroup.SetActive(true);
+            unlockedGroup.SetActive(false);
+            completedGroup.SetActive(false);
+        }
+    }
+
+    public void DisplayOrder(Order order)
+    {
+        if (order == null)
+        {
+            foreach (Image icon in iceCreamIcons)
+            {
+                icon.gameObject.SetActive(false);
+            }
+            return;
+        }
+
+        currentOrder = order;
+        for (int i = 0; i < iceCreamIcons.Count; i++)
+        {
+            if (i < currentOrder.GetIceCreams().Count)
+            {
+                iceCreamIcons[i].sprite = currentOrder.GetIceCreams()[i].icon;
+                iceCreamIcons[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                iceCreamIcons[i].gameObject.SetActive(false);
+            }
+        }
+        UpdatePrizeText();
+    }
+
+    public void UpdatePrizeText()
+    {
+        if (currentOrder == null)
+        {
+            prizeText.text = "0";
+            return;
+        }
+        prizeText.text = currentOrder.CalculatePrize().ToString();
+    }
+
+    public void UpdateComeplteButton()
+    {
+        if (currentOrder == null)
+        {
+            completeButton.interactable = false;
+            return;
+        }
+        completeButton.interactable = currentOrder.IsCompleted();
+        Color fadedColor = new Color(1, 1, 1, 0.5f);
+        completeButton.transform.GetChild(0).GetComponent<Image>().color = completeButton.interactable ? Color.white : fadedColor;
+    }
+
+    public void CompleteOrder()
+    {
+        if (currentOrder == null) return;
+        MarkAsCompleted();
+        List<IceCreamTypeSO> typeSOs = currentOrder.GetIceCreams();
+
+        List<Block> blocks = new List<Block>(UnityEngine.GameObject.FindObjectsOfType<Block>());
+        foreach (Block block in blocks)
+        {
+            if (typeSOs.Contains(block.GetIceCreamType()))
+            {
+                int index = typeSOs.IndexOf(block.GetIceCreamType());
+                typeSOs.RemoveAt(index);
+                block.ScaleOutAnimationAndDestroy(0.1f);
+            }
+        }
+        ScoreManager.Instance.ModifyScore(currentOrder.CalculatePrize());
+    }
+
+    public int GetIndex()
+    {
+        return index; 
+    }
+
+    public void MarkAsCompleted()
+    {
+        unlockedGroup.SetActive(false);
+        completedGroup.SetActive(true);
     }
 }

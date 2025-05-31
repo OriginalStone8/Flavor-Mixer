@@ -40,6 +40,7 @@ public class MovementManager : MonoBehaviour
         if (!movedAny)
         {
             GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
+            OrdersManager.Instance.UpdateAllDisplayButtons();
         }
         else
         {
@@ -116,7 +117,7 @@ public class MovementManager : MonoBehaviour
                 {
                     //TileManager.Instance.PrintTileStates();
                     if (!GameManagerScript.Instance.isGameOver())
-                        GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
+                        StartCoroutine(WaitBeforeCanSwipe(0.01f));
                 }
             });
 
@@ -131,6 +132,13 @@ public class MovementManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         GameManagerScript.Instance.SpawnNewIceCream();
+    }
+
+    private IEnumerator WaitBeforeCanSwipe(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
+        OrdersManager.Instance.UpdateAllDisplayButtons();
     }
 }
 

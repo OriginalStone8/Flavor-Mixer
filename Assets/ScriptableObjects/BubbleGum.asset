@@ -15,5 +15,5 @@ MonoBehaviour:
   index: 7
   price: 8
   scorePerMerge: 256
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5e35264a56a734fc7aed9c8646e1166d, type: 3}
   sprite: {fileID: 21300000, guid: 5e35264a56a734fc7aed9c8646e1166d, type: 3}
