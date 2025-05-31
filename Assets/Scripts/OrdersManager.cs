@@ -64,4 +64,16 @@ public class OrdersManager : MonoBehaviour
     {
         return maxPerOrder;
     }
+
+    public bool AnyCompletedOrders()
+    {
+        foreach (OrderDisplay display in orderDisplays)
+        {
+            if (display.GetOrder() != null && display.GetOrder().IsCompleted())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

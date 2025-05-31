@@ -87,7 +87,7 @@ public class GameManagerScript : MonoBehaviour
     private void CheckForGameOver()
     {
         Tile[] availableTiles = TileManager.Instance.GetAvailableTiles();
-        if (availableTiles.Length == 0 && !TileManager.Instance.HasMergeOptions())
+        if (availableTiles.Length == 0 && !TileManager.Instance.HasMergeOptions() && !OrdersManager.Instance.AnyCompletedOrders())
         {
             GameOver();
         }

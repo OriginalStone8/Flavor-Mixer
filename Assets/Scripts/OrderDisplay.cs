@@ -104,6 +104,7 @@ public class OrderDisplay : MonoBehaviour
             }
         }
         ScoreManager.Instance.ModifyScore(currentOrder.CalculatePrize());
+        currentOrder = null;
     }
 
     public int GetIndex()
@@ -113,7 +114,16 @@ public class OrderDisplay : MonoBehaviour
 
     public void MarkAsCompleted()
     {
-        unlockedGroup.SetActive(false);
-        completedGroup.SetActive(true);
+        LeanTween.scale(unlockedGroup, Vector3.zero, 0.2f).setEaseOutBack().setOnComplete(() => {
+            unlockedGroup.SetActive(false);
+            completedGroup.SetActive(true);
+            completedGroup.transform.localScale = Vector3.zero;
+            LeanTween.scale(completedGroup, Vector3.one, 0.2f).setEaseInBack();
+        });
+    }
+
+    public Order GetOrder()
+    {
+        return currentOrder;
     }
 }
