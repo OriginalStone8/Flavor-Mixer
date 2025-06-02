@@ -17,9 +17,19 @@ public class OrderDisplay : MonoBehaviour
 
     private Order currentOrder;
 
-    private void Awake() 
+    public void UnlockDisplay()
     {
-        
+        PlayerPrefs.SetInt("Order" + index, 1);
+        PlayerPrefs.Save();
+
+        if (GameManagerScript.Instance.InGameMode())
+        {
+            //unlock while in game
+            DisplaySetup(true);
+            Order order = OrdersManager.Instance.GenerateOrder();
+            DisplayOrder(order);
+            UpdateComeplteButton();
+        }
     }
 
     public void DisplaySetup(bool unlocked)
@@ -55,11 +65,14 @@ public class OrderDisplay : MonoBehaviour
             if (i < currentOrder.GetIceCreams().Count)
             {
                 iceCreamIcons[i].sprite = currentOrder.GetIceCreams()[i].icon;
+                iceCreamIcons[i].color = new Color(1, 1, 1, 1);
                 iceCreamIcons[i].gameObject.SetActive(true);
             }
             else
             {
-                iceCreamIcons[i].gameObject.SetActive(false);
+                iceCreamIcons[i].sprite = OrdersManager.Instance.GetEmptyIcon();
+                iceCreamIcons[i].color = new Color(1, 1, 1, 0.3f);
+                iceCreamIcons[i].gameObject.SetActive(true);
             }
         }
         UpdatePrizeText();
@@ -72,7 +85,8 @@ public class OrderDisplay : MonoBehaviour
             prizeText.text = "0";
             return;
         }
-        prizeText.text = currentOrder.CalculatePrize().ToString();
+        currentOrder.CalculatePrize();
+        prizeText.text = currentOrder.GetPrize().ToString();
     }
 
     public void UpdateComeplteButton()
@@ -103,7 +117,7 @@ public class OrderDisplay : MonoBehaviour
                 block.ScaleOutAnimationAndDestroy(0.1f);
             }
         }
-        ScoreManager.Instance.ModifyScore(currentOrder.CalculatePrize());
+        ScoreManager.Instance.ModifyScore(currentOrder.GetPrize());
         currentOrder = null;
     }
 

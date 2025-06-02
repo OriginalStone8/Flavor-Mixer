@@ -9,6 +9,7 @@ public class OrdersManager : MonoBehaviour
     [SerializeField] private List<OrderDisplay> orderDisplays;
     [SerializeField] private GameObject popup;
     [SerializeField] private int maxPerOrder;
+    [SerializeField] private Sprite emptyIcon;
 
     private void Awake() 
     {
@@ -19,6 +20,18 @@ public class OrdersManager : MonoBehaviour
     {
         SceneManagement.Instance.OnGameStart += SetupAllDisplays;
         popup.SetActive(false);
+    }
+
+    public void BuyExtraDisplay(int num)
+    {
+        orderDisplays[num].UnlockDisplay();
+        ShopItemManager.Instance.LockItemState(num - 1);
+        ShopItemManager.Instance.UpdateItems();
+        int price = ShopItemManager.Instance.GetItemPrice(num - 1);
+        string currency = ShopItemManager.Instance.GetItemCurrency(num - 1);
+        if (currency.Equals("Coins")) CurrencyManager.Instance.ModifyCoins(-price);
+        else if (currency.Equals("Gems")) CurrencyManager.Instance.ModifyGems(-price);
+        ShopItemManager.Instance.UpdateItemsButton();
     }
 
     private void SetupAllDisplays(object sender, EventArgs e)
@@ -75,5 +88,10 @@ public class OrdersManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public Sprite GetEmptyIcon()
+    {
+        return emptyIcon;
     }
 }

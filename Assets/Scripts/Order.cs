@@ -74,7 +74,7 @@ public class Order
         return foundIceCreams;
     }
 
-    public int CalculatePrize()
+    public void CalculatePrize()
     {
         prize = 0;
         List<IceCreamTypeSO> types = GameManagerScript.Instance.GetIcecreamTypeList();
@@ -90,7 +90,6 @@ public class Order
             prize += iceCreamType.scorePerMerge;
         }
         prize += iceCreamTypes.Count * 50;
-        return prize;
     }
 
     public List<IceCreamTypeSO> GetIceCreams()
@@ -101,5 +100,10 @@ public class Order
     public List<int> GetAmounts()
     {
         return amounts;
+    }
+
+    public int GetPrize()
+    {
+        return prize;
     }
 }

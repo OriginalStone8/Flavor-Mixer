@@ -40,4 +40,18 @@ public class CurrencyManager : MonoBehaviour
         PlayerPrefs.SetInt(GEM_COUNT_KEY, gemCount);
         OnCurrencyChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public bool canAfford(int price, string currency)
+    {
+        if (currency.Equals("Coins"))
+        {
+            return GetCoinCount() >= price;
+        }
+        else if (currency.Equals("Gems"))
+        {
+            return GetGemCount() >= price;
+        }
+        Debug.LogError("Unknown currency type: " + currency);
+        return false;
+    }
 }

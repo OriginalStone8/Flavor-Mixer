@@ -134,8 +134,12 @@ public class GameManagerScript : MonoBehaviour
 
     public void SetGameState(GameState state)
     {
-        //Debug.Log("Game State changed from: " + gameState + " to: " + state);
         gameState = state;  
+    }
+
+    public bool InGameMode()
+    {
+        return gameState == GameState.canSwipe || gameState == GameState.canNotSwipe;
     }
 
     public int GetIceCreamTypeCount()

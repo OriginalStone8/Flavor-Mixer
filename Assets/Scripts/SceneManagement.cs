@@ -17,7 +17,8 @@ public class SceneManagement : MonoBehaviour
     [SerializeField] private float startPosY, endPosY;
     [SerializeField] private float meltAnimTime;
 
-    [SerializeField] private Button shopBtn, ordersBtn;
+    [SerializeField] private List<Button> shopBtns;
+    [SerializeField] private GameObject tilesBG;
 
     private void Awake() 
     {
@@ -106,15 +107,29 @@ public class SceneManagement : MonoBehaviour
     {
         popup.SetActive(true);
         PopupAnim(popup, true, 0.2f);
-        ordersBtn.interactable = false;
-        shopBtn.interactable = false;
+        if (popup.CompareTag("Shop"))
+        {
+            foreach (Button btn in shopBtns)
+            {
+                btn.interactable = false;
+            }
+            tilesBG.SetActive(false);
+            ShopItemManager.Instance.UpdateItems();
+            ShopItemManager.Instance.UpdateItemsButton();
+        }
     }
 
     public void ClosePopup(GameObject popup)
     {
         PopupAnim(popup, false, 0.2f);
-        ordersBtn.interactable = true;
-        shopBtn.interactable = true;
+        if (popup.CompareTag("Shop"))
+        {
+            foreach (Button btn in shopBtns)
+            {
+                btn.interactable = true;
+            }
+            tilesBG.SetActive(true);
+        }
     }
 
     private void PopupAnim(GameObject popup, bool on, float time)
