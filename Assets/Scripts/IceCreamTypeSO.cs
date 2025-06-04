@@ -6,8 +6,8 @@ using UnityEngine;
 public class IceCreamTypeSO : ScriptableObject
 {
     public int index;
-    public int price;
     public int scorePerMerge;
     public Sprite icon;
     public Sprite sprite;
+    public int maxPerOrder;
 }

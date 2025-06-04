@@ -6,13 +6,11 @@ using UnityEngine;
 public class Order
 {
     private List<IceCreamTypeSO> iceCreamTypes;
-    private List<int> amounts;
     private int prize;
 
     public Order()
     {
         iceCreamTypes = new List<IceCreamTypeSO>();
-        amounts = new List<int>();
         GenerateRandomOrder();
     }
 
@@ -21,20 +19,26 @@ public class Order
         int orderSize = UnityEngine.Random.Range(1, OrdersManager.Instance.GetMaxPerOrder() + 1);
         for (int i = 0; i < orderSize; i++)
         {
-            iceCreamTypes.Add(GameManagerScript.Instance.GetRandomIceCreamType());
-            /*if (iceCreamTypes[i].index == GameManagerScript.Instance.GetIceCreamTypeCount() - 1)
+            IceCreamTypeSO iceCreamType = GameManagerScript.Instance.GetRandomIceCreamType();
+            while (GetCountOf(iceCreamType) > iceCreamType.maxPerOrder)
             {
-                amounts.Add(1);
+                iceCreamType = GameManagerScript.Instance.GetRandomIceCreamType();
             }
-            else if (iceCreamTypes[i].index >= GameManagerScript.Instance.GetIceCreamTypeCount() - 3)
-            {
-                amounts.Add(UnityEngine.Random.Range(1, 3));
-            }
-            else
-            {
-                amounts.Add(UnityEngine.Random.Range(1, 4));
-            }*/
+            iceCreamTypes.Add(iceCreamType);
         }
+    }
+
+    private int GetCountOf(IceCreamTypeSO type)
+    {
+        int count = 0;
+        for (int i = 0; i < iceCreamTypes.Count; i++)
+        {
+            if (iceCreamTypes[i] == type)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     public bool IsCompleted()
@@ -96,12 +100,7 @@ public class Order
     {
         return iceCreamTypes;
     }
-
-    public List<int> GetAmounts()
-    {
-        return amounts;
-    }
-
+    
     public int GetPrize()
     {
         return prize;

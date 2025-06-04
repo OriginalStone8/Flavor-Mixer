@@ -28,6 +28,7 @@ public class GameOverUI : MonoBehaviour
     private void HandleGameOver(object sender, EventArgs e)
     {
         UpdateScoreTexts();
+        ContinueGame.Instance.UpdateContinueButtonInteractability();
         SceneManagement.Instance.MeltTransition(OnPopup);
     }
 
@@ -44,12 +45,12 @@ public class GameOverUI : MonoBehaviour
         highScoreText.text = "High Score: " + ScoreManager.Instance.GetHighScore().ToString();
     }
 
-    public void ClosePopup()
+    public void ClosePopup(bool gameOver)
     {
         LeanTween.scale(gameOverPopup, new Vector3(0, 0, 0), 0.2f).setEaseInBack().setOnComplete(() => 
         {
             gameOverPopup.SetActive(false);
-            SceneManagement.Instance.RestartMeltTransition();
+            SceneManagement.Instance.RestartMeltTransition(gameOver);
         });
     }
 }

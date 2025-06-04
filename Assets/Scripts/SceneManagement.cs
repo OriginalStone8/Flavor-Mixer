@@ -20,13 +20,13 @@ public class SceneManagement : MonoBehaviour
     [SerializeField] private List<Button> shopBtns;
     [SerializeField] private GameObject tilesBG;
 
-    private void Awake() 
+    private void Awake()
     {
         Instance = this;
         InitializeUI();
     }
 
-    private void Update() 
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -46,7 +46,8 @@ public class SceneManagement : MonoBehaviour
         meltBGRect.localPosition = new Vector3(0, startPosY, meltBGRect.position.z);
         startGameCanvas.transform.GetChild(0).GetComponent<Button>().interactable = false;
         startGameCanvas.transform.GetChild(0).localScale = new Vector3(0, 0, 1);
-        LeanTween.scale(startGameCanvas.transform.GetChild(0).gameObject, new Vector3(1, 1, 1), 0.4f).setEaseInCubic().setOnComplete(() => {
+        LeanTween.scale(startGameCanvas.transform.GetChild(0).gameObject, new Vector3(1, 1, 1), 0.4f).setEaseInCubic().setOnComplete(() =>
+        {
             startGameCanvas.transform.GetChild(0).GetComponent<Button>().interactable = true;
         });
     }
@@ -65,12 +66,21 @@ public class SceneManagement : MonoBehaviour
         LeanTween.moveLocal(meltBG, new Vector3(0, endPosY, pos.z), meltAnimTime).setEaseInOutSine();
     }
 
-    public void RestartMeltTransition()
+    public void RestartMeltTransition(bool gameOver)
     {
         RectTransform meltBGRect = meltBG.GetComponent<RectTransform>();
         Vector3 pos = meltBGRect.localPosition;
-        LeanTween.moveLocal(meltBG, new Vector3(0, startPosY, pos.z), meltAnimTime).setEaseInOutSine().setOnComplete(() => {
-            ResetAnimation();
+        LeanTween.moveLocal(meltBG, new Vector3(0, startPosY, pos.z), meltAnimTime).setEaseInOutSine().setOnComplete(() =>
+        {
+            if (gameOver)
+            {
+                ResetAnimation();
+            }
+            else
+            {
+                //continue
+                ContinueGame.Instance.DestroyForContinue();
+            }
         });
     }
 
@@ -94,7 +104,12 @@ public class SceneManagement : MonoBehaviour
 
     public void RestartGame()
     {
-        GameOverUI.Instance.ClosePopup();
+        GameOverUI.Instance.ClosePopup(true);
+    }
+
+    public void ContinuePlaying()
+    {
+        GameOverUI.Instance.ClosePopup(false);
     }
 
     public void StartGame()
@@ -141,7 +156,7 @@ public class SceneManagement : MonoBehaviour
         }
         else
         {
-            LeanTween.scale(popup, new Vector3(0, 0, 0), time).setEaseInBack().setOnComplete(() => 
+            LeanTween.scale(popup, new Vector3(0, 0, 0), time).setEaseInBack().setOnComplete(() =>
             {
                 popup.SetActive(false);
             });
@@ -152,5 +167,11 @@ public class SceneManagement : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         OnGameStart?.Invoke(this, EventArgs.Empty);
+    }
+    
+    public IEnumerator DelayedContinue(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
     }
 }

@@ -31,7 +31,7 @@ public class ShopItemManager : MonoBehaviour
     {
         foreach (OneTimeShopItem item in shopItems)
         {
-            bool canAfford = CurrencyManager.Instance.canAfford(item.GetPrice(), item.GetCurrency());
+            bool canAfford = CurrencyManager.Instance.CanAfford(item.GetPrice(), item.GetCurrency());
             item.ToggleBuyButton(canAfford);
         }
     }

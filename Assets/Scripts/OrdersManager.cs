@@ -11,12 +11,12 @@ public class OrdersManager : MonoBehaviour
     [SerializeField] private int maxPerOrder;
     [SerializeField] private Sprite emptyIcon;
 
-    private void Awake() 
+    private void Awake()
     {
         Instance = this;
     }
 
-    private void Start() 
+    private void Start()
     {
         SceneManagement.Instance.OnGameStart += SetupAllDisplays;
         popup.SetActive(false);

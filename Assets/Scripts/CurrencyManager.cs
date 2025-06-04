@@ -41,7 +41,7 @@ public class CurrencyManager : MonoBehaviour
         OnCurrencyChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public bool canAfford(int price, string currency)
+    public bool CanAfford(int price, string currency)
     {
         if (currency.Equals("Coins"))
         {
