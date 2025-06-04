@@ -122,12 +122,12 @@ public class GameManagerScript : MonoBehaviour
         // Handle game over logic here
     }
 
-    public bool canSwipe()
+    public bool CanSwipe()
     {
         return gameState == GameState.canSwipe;
     } 
 
-    public bool isGameOver()
+    public bool IsGameOver()
     {
         return gameState == GameState.GameOver;
     }

@@ -20,7 +20,7 @@ public class Order
         for (int i = 0; i < orderSize; i++)
         {
             IceCreamTypeSO iceCreamType = GameManagerScript.Instance.GetRandomIceCreamType();
-            while (GetCountOf(iceCreamType) > iceCreamType.maxPerOrder)
+            while (GetCountOf(iceCreamType) > iceCreamType.maxPerOrder - 1)
             {
                 iceCreamType = GameManagerScript.Instance.GetRandomIceCreamType();
             }

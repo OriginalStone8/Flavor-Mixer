@@ -28,6 +28,7 @@ public class GameOverUI : MonoBehaviour
     private void HandleGameOver(object sender, EventArgs e)
     {
         UpdateScoreTexts();
+        PrizeTracker.Instance.SetRewardTexts();
         ContinueGame.Instance.UpdateContinueButtonInteractability();
         SceneManagement.Instance.MeltTransition(OnPopup);
     }

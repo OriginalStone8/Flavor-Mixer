@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: MintChocolateChips
   m_EditorClassIdentifier: 
   index: 3
-  price: 4
   scorePerMerge: 16
   icon: {fileID: 21300000, guid: ae90a5cc8a01242dab0c4297b250bf65, type: 3}
   sprite: {fileID: 21300000, guid: caaf601841fe0486e9966f21fb4b5f99, type: 3}
+  maxPerOrder: 4
+  rewardCoins: 2
+  rewardGems: 0

@@ -10,4 +10,6 @@ public class IceCreamTypeSO : ScriptableObject
     public Sprite icon;
     public Sprite sprite;
     public int maxPerOrder;
+    public int rewardCoins;
+    public int rewardGems;
 }

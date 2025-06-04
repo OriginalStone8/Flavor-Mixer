@@ -23,7 +23,7 @@ public class SwipeManager : MonoBehaviour
 
     private void Update()
     {
-        if (!GameManagerScript.Instance.canSwipe()) return;
+        if (!GameManagerScript.Instance.CanSwipe()) return;
         #if UNITY_EDITOR
         HandleMouseInput();
         HandleKeyboardInput();

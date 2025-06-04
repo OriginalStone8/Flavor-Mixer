@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Lemon
   m_EditorClassIdentifier: 
   index: 5
-  price: 6
   scorePerMerge: 64
   icon: {fileID: 21300000, guid: 358d5b6dc9e2d43cf8a524ffdf69ac86, type: 3}
   sprite: {fileID: 21300000, guid: 39b2bac6aad7f4a22b6ab732bbc90409, type: 3}
+  maxPerOrder: 3
+  rewardCoins: 7
+  rewardGems: 0

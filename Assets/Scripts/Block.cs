@@ -42,6 +42,7 @@ public class Block : MonoBehaviour
         }
         IceCreamTypeSO newType = GameManagerScript.Instance.GetNextIceCreamType(iceCreamType);
         SetIceCreamType(newType);
+        MovementManager.Instance.InvokeOnMerge(this);
 
         ScaleAnimation(1.2f);
     }

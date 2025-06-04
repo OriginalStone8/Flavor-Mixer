@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: CottonCandy
   m_EditorClassIdentifier: 
   index: 8
-  price: 9
   scorePerMerge: 512
   icon: {fileID: 21300000, guid: f2b0234c904f542c5b3c7451563f6d4d, type: 3}
   sprite: {fileID: 21300000, guid: 044ec54d4dc434c66b31a2996bad47a1, type: 3}
+  maxPerOrder: 2
+  rewardCoins: 20
+  rewardGems: 2

@@ -80,7 +80,6 @@ public class MovementManager : MonoBehaviour
             if (i + 1 < blocks.Count && blocks[i].CanMerge(blocks[i + 1]))
             {
                 blocks[i].MergeWith();
-                OnMerge?.Invoke(this, new OnMergeEventArgs { MergedBlock = blocks[i] });
                 Destroy(blocks[i + 1].gameObject);
                 blocks.RemoveAt(i + 1); // Remove merged block
                 moved = true;
@@ -91,7 +90,7 @@ public class MovementManager : MonoBehaviour
             if (current.transform.position != targetTile.transform.position)
             {
                 moved = true;
-            } 
+            }
             else
             {
                 current.transform.position = targetTile.transform.position;
@@ -116,7 +115,7 @@ public class MovementManager : MonoBehaviour
                 if (blocksInMotion == 0)
                 {
                     //TileManager.Instance.PrintTileStates();
-                    if (!GameManagerScript.Instance.isGameOver())
+                    if (!GameManagerScript.Instance.IsGameOver())
                         StartCoroutine(WaitBeforeCanSwipe(0.01f));
                 }
             });
@@ -139,6 +138,11 @@ public class MovementManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         GameManagerScript.Instance.SetGameState(GameManagerScript.GameState.canSwipe);
         OrdersManager.Instance.UpdateAllDisplayButtons();
+    }
+
+    public void InvokeOnMerge(Block block)
+    {
+        OnMerge?.Invoke(this, new OnMergeEventArgs { MergedBlock = block });
     }
 }
 

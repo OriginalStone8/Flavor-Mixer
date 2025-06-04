@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: CaramelSwirl
   m_EditorClassIdentifier: 
   index: 6
-  price: 7
   scorePerMerge: 128
   icon: {fileID: 21300000, guid: 4025e36d75827440cabb9541cf4a5576, type: 3}
   sprite: {fileID: 21300000, guid: 78ff72f2d2b2e4d6f97e9694183a730d, type: 3}
+  maxPerOrder: 3
+  rewardCoins: 10
+  rewardGems: 0
